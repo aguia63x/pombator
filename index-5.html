@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Pombator • Arcade</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pombator • Arcade">
+<meta property="og:description" content="Pombator — mini-game arcade com Pombo Coins (P$)">
+<meta property="og:image" content="https://aguia63x.github.io/pombator/pombator-social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo oficial do Pombator">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pombator • Arcade">
+<meta name="twitter:description" content="Pombator — mini-game arcade com Pombo Coins (P$)">
+<meta name="twitter:image" content="https://aguia63x.github.io/pombator/pombator-social-card.png">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#070a0d;--panel:#13181d;--panel2:#1a2026;--line:#293139;--pink:#ff1749;--green:#20d800;--gold:#ffc62e;--text:#f7f9fb;--muted:#8c969e}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -10%,#26313a 0,#0a0d10 42%,#040607 100%);color:var(--text);font-family:Inter,Arial,sans-serif}
+body{min-height:100vh}.app{width:100%;max-width:680px;margin:auto;min-height:100vh;background:linear-gradient(180deg,#11161a,#0b1014);overflow:hidden}
+.top{height:76px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #242b31;background:#0d1216ee}
+.brand{display:flex;align-items:center;gap:9px}.logo{font-size:32px;font-weight:950;font-style:italic;letter-spacing:-2px;color:#ff1749;text-shadow:0 2px 0 #760b23}
+.logoMark{width:42px;height:42px;filter:drop-shadow(0 0 9px #ff174966)}
+.wallet{padding:7px 11px;border:1px solid #303940;border-radius:18px;background:#171d22;display:flex;gap:8px;align-items:center}.coin{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(#ffe56a,#efad0d);color:#684600;font-size:14px}.balance{font-size:20px;font-weight:900;color:#a1ff48}
+.boardWrap{padding:10px}.board{height:355px;border:1px solid #35404a;border-radius:27px;overflow:hidden;position:relative;background:#05080a;box-shadow:0 14px 35px #0009,inset 0 0 0 1px #ffffff08}
+.board svg.bg{position:absolute;inset:0;width:100%;height:100%}.mult{position:absolute;z-index:5;inset:0;display:flex;align-items:center;justify-content:center;padding-bottom:12px;font-size:84px;font-weight:950;letter-spacing:-4px;text-shadow:0 4px 20px #000,0 0 20px #ffffff2a}.mult .x{font-size:.46em;opacity:.82}
+.livePill,.roundBadge,.modeBadge{position:absolute;z-index:10;padding:6px 10px;border-radius:14px;background:#090d11c9;border:1px solid #ffffff12;backdrop-filter:blur(6px);font-size:10px;font-weight:850;letter-spacing:.6px}.livePill{left:12px;top:12px}.roundBadge{right:12px;top:12px;color:#aeb7bd}.modeBadge{left:12px;bottom:12px;color:#aeb7bd}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#21e400;box-shadow:0 0 9px #21e400;margin-right:5px}
+.pigeon{position:absolute;z-index:8;width:88px;height:74px;transform:translate(-50%,-50%);filter:drop-shadow(0 0 10px #ff3154) drop-shadow(0 8px 8px #0009);pointer-events:none;will-change:left,top,transform}.pigeon svg{width:100%;height:100%;overflow:visible;animation:bob .16s ease-in-out infinite alternate}@keyframes bob{to{margin-top:-3px}}.wing{transform-box:fill-box;transform-origin:55% 70%;animation:wing .16s ease-in-out infinite alternate}@keyframes wing{to{transform:rotate(-17deg) translateY(-3px)}}
+.board.speed:before{content:"";position:absolute;z-index:2;inset:-30%;background:conic-gradient(from 215deg,transparent 0 35%,#fff1 42%,transparent 50% 100%);animation:sweep .55s linear infinite;pointer-events:none}@keyframes sweep{to{transform:translateX(38%) rotate(-8deg)}}.board.warning{box-shadow:0 0 0 1px #ff365744,0 0 55px #ff123022 inset,0 14px 35px #0009}.board.warning .mult{animation:pulse .22s ease-in-out infinite alternate}@keyframes pulse{to{transform:scale(1.05);text-shadow:0 0 35px #ff3154aa}}
+.controls{margin:0 10px;padding:12px;border:1px solid #252d34;border-radius:24px;background:linear-gradient(180deg,#1a2025,#151a1f);box-shadow:0 12px 30px #0007}.tabs{height:45px;background:#0e1317;border-radius:24px;padding:4px;display:flex;margin-bottom:10px}.tab{flex:1;display:grid;place-items:center;color:#7c858c;font-weight:800}.tab.active{background:#343c43;color:#fff;border-radius:21px}
+.scoreRow{display:flex;justify-content:space-between;align-items:center;gap:10px}.scoreBox{flex:1;border:1px solid #293139;border-radius:17px;background:#0e1418;padding:10px 12px}.label{font-size:10px;color:#818b92;font-weight:800;text-transform:uppercase;letter-spacing:.7px}.value{font-size:24px;font-weight:950;margin-top:3px}.value.green{color:#a0ff48}.launch{width:100%;height:58px;margin-top:10px;border:0;border-radius:23px;background:linear-gradient(#20df05,#12b900);color:#fff;font-size:23px;font-weight:950;box-shadow:0 7px 18px #0fc60035,inset 0 1px #ffffff44}.launch:active,.smallBtn:active{transform:scale(.98)}.status{text-align:center;color:#9aa2a8;font-size:13px;font-weight:650;margin-top:7px;min-height:18px}.status.good{color:#9cff55}.status.bad{color:#ff687f}.status.gold{color:#ffd84c}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px}.card{border:1px solid #252d34;border-radius:20px;background:linear-gradient(180deg,#171d22,#11161a);padding:12px}.card h3{font-size:14px;margin:0 0 10px}.history{display:flex;gap:7px;flex-wrap:wrap}.chip{padding:6px 9px;border-radius:12px;background:#0b1115;border:1px solid #283139;color:#c2c9ce;font-size:11px;font-weight:850}.chip.epic{color:#ffd84c;border-color:#80691e;background:#19160b}.stats{display:grid;grid-template-columns:1fr 1fr;gap:7px}.stat{padding:8px;border-radius:12px;background:#0b1115}.stat b{display:block;font-size:15px}.stat span{font-size:10px;color:#7f8990}.achievements{display:grid;gap:7px}.achievement{display:flex;gap:8px;align-items:center;padding:8px;border-radius:12px;background:#0b1115;border:1px solid #202930}.achievement.locked{opacity:.45}.badge{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#252d34}.achievement b{font-size:11px}.achievement span{display:block;color:#7f8990;font-size:9px;margin-top:2px}
+.footerLine{height:1px;background:linear-gradient(90deg,transparent,#2a3238,transparent);margin:0 22px 7px}.aboutBtn{display:block;margin:0 auto 14px;padding:7px 13px;border:1px solid #29323a;border-radius:18px;background:#11171b;color:#929ca3;font-size:11px;font-weight:800}
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:18px;background:#000b;backdrop-filter:blur(7px)}.modal.open{display:flex}.modalCard{position:relative;width:min(92vw,460px);padding:23px 20px 18px;border:1px solid #303a43;border-radius:25px;background:linear-gradient(180deg,#1a2025,#101519);box-shadow:0 25px 70px #000c}.modalCard h2{margin:0 0 10px;font-size:24px}.modalCard p{color:#b8c0c5;font-size:13px;line-height:1.55}.close{position:absolute;right:12px;top:9px;width:38px;height:38px;border:0;border-radius:50%;background:#252d33;color:#fff;font-size:25px}.info{border:1px solid #29323a;border-radius:16px;padding:4px 12px;background:#0d1216}.info div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #20272d;gap:10px}.info div:last-child{border:0}.info b{font-size:11px}.info span{font-size:11px;color:#89939a;text-align:right}
+#game.flash{animation:flash .42s ease-out}@keyframes flash{35%{filter:brightness(1.4) saturate(1.2)}}
+@media(max-width:460px){.logo{font-size:29px}.board{height:310px}.mult{font-size:69px}.pigeon{width:73px;height:61px}.grid{grid-template-columns:1fr}.scoreRow{gap:7px}.value{font-size:21px}}
+
+.betPanel{margin-top:10px;padding:11px;border:1px solid #293139;border-radius:18px;background:#0e1418}
+.betHead{display:flex;justify-content:space-between;align-items:center;gap:8px}.betAvailable{font-size:10px;color:#7f8990;font-weight:750}
+.betRow{display:flex;gap:7px;margin-top:8px}.betAdjust{width:48px;height:48px;border:1px solid #303a42;border-radius:14px;background:#20272d;color:#fff;font-size:27px;font-weight:900}
+.betInput{min-width:0;flex:1;height:48px;border:1px solid #39444d;border-radius:14px;background:#080d10;color:#fff;text-align:center;font-size:23px;font-weight:950;outline:none}
+.betInput:focus{border-color:#20d800;box-shadow:0 0 0 2px #20d80022}.quickBets{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:7px}
+.quickBet{height:32px;border:1px solid #293139;border-radius:10px;background:#171d22;color:#bfc7cc;font-size:11px;font-weight:850}.quickBet:active,.betAdjust:active{transform:scale(.97)}
+.actionRow{display:block;margin-top:10px}.actionRow .launch{margin-top:0}
+.launch.cashoutMode{background:linear-gradient(#ffcf38,#e79f00);color:#211700;box-shadow:0 7px 18px #d99a0035,inset 0 1px #ffffff66}
+.launch:disabled{opacity:.7}
+</style>
+</head>
+<body>
+<div class="app" id="game">
+<header class="top">
+  <div class="brand">
+    <svg class="logoMark" viewBox="0 0 100 100"><path d="M17 58C20 38 36 27 55 31c12 2 18 9 23 17l13-3-9 12c-4 13-17 21-35 20-15-1-25-7-30-19Z" fill="#d9dde0" stroke="#343b41" stroke-width="3"/><path d="M34 54c9-16 25-17 36-7-8 3-14 11-16 20-8-3-15-7-20-13Z" fill="#aeb6bc" stroke="#4b545b" stroke-width="2.5"/><path d="M22 54 8 47l9 14Z" fill="#8e979f"/><path d="M52 31c1-11 10-17 18-11 3-9 11-7 12 1 5 0 8 4 5 9-5 7-18 10-27 7Z" fill="#d9dde0" stroke="#343b41" stroke-width="3"/><circle cx="72" cy="25" r="3.5" fill="#111"/><path d="m87 29 10 3-10 4Z" fill="#f2a33a"/></svg>
+    <div class="logo">Pombator</div>
+  </div>
+  <div class="wallet"><span class="coin">★</span><span class="balance" id="balanceTop">P$ 1.000,00</span></div>
+</header>
+
+<div class="boardWrap">
+<section class="board" id="board">
+  <div class="livePill"><span class="dot"></span>POMBATOR ARCADE</div>
+  <div class="roundBadge" id="roundBadge">VOO #001</div>
+  <svg class="bg" viewBox="0 0 600 420" preserveAspectRatio="none">
+    <defs><radialGradient id="bg"><stop stop-color="#12354a"/><stop offset=".45" stop-color="#071117"/><stop offset="1" stop-color="#030506"/></radialGradient><linearGradient id="fill" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#8b002d" stop-opacity=".85"/><stop offset="1" stop-color="#e50048" stop-opacity=".04"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <rect width="600" height="420" fill="url(#bg)"/><g opacity=".35" fill="#14191d"><path d="M0 420 0 0l105 420z"/><path d="M0 420 80 0l90 420z"/><path d="M0 420 205 0l40 420z"/><path d="M0 420 330 0l-5 420z"/><path d="M0 420 460 0l-55 420z"/><path d="M0 420 570 0l-80 420z"/></g>
+    <path d="M0 418C100 414 180 385 245 330c85-72 145-140 230-205 50-38 90-65 125-82v377Z" fill="url(#fill)"/><path d="M0 418C100 414 180 385 245 330c85-72 145-140 230-205 50-38 90-65 125-82" fill="none" stroke="#ff1749" stroke-width="5" filter="url(#glow)"/>
+  </svg>
+  <div class="mult" id="mult">1.00<span class="x">x</span></div>
+  <div class="pigeon" id="pigeon">
+    <svg viewBox="0 0 120 100"><defs><linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".62" stop-color="#d9dde0"/><stop offset="1" stop-color="#aeb5ba"/></linearGradient></defs>
+      <path d="M42 49C17 33 10 17 20 8c19 3 37 16 45 34-8-4-16-2-23 7Z" fill="#e2e5e8" stroke="#8f989e" stroke-width="1.5"/>
+      <path class="wing" d="M55 34c15-5 31 2 36 14-10 7-19 16-24 24-11-8-19-20-12-38Z" fill="#f5f6f7" stroke="#8e979d" stroke-width="1.5"/>
+      <path d="M31 54c1-17 14-27 32-25 13 1 21 9 28 19 6 9 15 11 23 9-6 13-18 21-32 20-14-1-24-9-31-15-6 6-14 6-22 2-5-3-4-8 2-10Z" fill="url(#body)" stroke="#929ba1" stroke-width="1.6"/>
+      <path d="M48 42c-8-11-4-25 8-30 12-5 24 1 27 12 3 11-6 20-18 22-7 1-12 0-17-4Z" fill="url(#body)" stroke="#929ba1" stroke-width="1.6"/>
+      <path d="M53 15c-5-7-2-12 4-13 1 5 4 8 7 10 0-7 4-10 9-8-2 5-1 8 2 11" fill="#79a947"/>
+      <circle cx="72" cy="21" r="5.2" fill="#252a2e"/><circle cx="73.5" cy="19.4" r="1.5" fill="#fff"/><path d="m78 25 25 5-24 6c5-4 5-7-1-11Z" fill="#ffb51b" stroke="#d38a00" stroke-width="1.2"/><path d="M31 58 8 49l12 15-14 3 26 3Z" fill="#c7cdd1"/>
+    </svg>
+  </div>
+</section>
+</div>
+
+<section class="controls">
+  <div class="tabs"><div class="tab active">Arcade</div><div class="tab">Desafios</div></div>
+  <div class="scoreRow">
+    <div class="scoreBox"><div class="label">SALDO • POMBO COINS</div><div class="value green" id="balanceMain">P$ 1.000,00</div></div>
+    <div class="scoreBox"><div class="label">Recorde</div><div class="value" id="best">0.00x</div></div>
+  </div>
+  <div class="betPanel">
+    <div class="betHead"><div class="label">VALOR DA APOSTA • POMBO COINS</div><div class="betAvailable" id="betAvailable">Saldo disponível: P$ 1.000,00</div></div>
+    <div class="betRow">
+      <button class="betAdjust" id="minusBet">−</button>
+      <input id="betInput" class="betInput" type="number" inputmode="decimal" min="0.01" step="0.01" value="1.00" aria-label="Valor da aposta em Pombo Coins">
+      <button class="betAdjust" id="plusBet">+</button>
+    </div>
+    <div class="quickBets">
+      <button class="quickBet" data-add="5">+5</button>
+      <button class="quickBet" data-add="10">+10</button>
+      <button class="quickBet" data-add="20">+20</button>
+      <button class="quickBet" data-add="100">+100</button>
+    </div>
+  </div>
+  <div class="actionRow">
+    <button class="launch" id="play">APOSTAR 1,00</button>
+  </div>
+  <div class="status" id="status">Defina o valor em Pombo Coins e decole. P$ é uma moeda virtual fictícia.</div>
+</section>
+
+<div class="grid">
+  <section class="card"><h3>Últimos voos</h3><div class="history" id="history"></div></section>
+  <section class="card"><h3>Estatísticas</h3><div class="stats"><div class="stat"><b id="flights">0</b><span>voos</span></div><div class="stat"><b id="epics">0</b><span>épicos</span></div><div class="stat"><b id="longest">0s</b><span>melhor duração</span></div><div class="stat"><b id="scoreGain">0</b><span>P$ ganhos</span></div></div></section>
+  <section class="card" style="grid-column:1/-1"><h3>Conquistas</h3><div class="achievements" id="achievements"></div></section>
+</div>
+
+<div class="footerLine"></div><button class="aboutBtn" id="aboutBtn">ⓘ Sobre o jogo</button>
+</div>
+
+<div class="modal" id="aboutModal" aria-hidden="true"><div class="modalCard">
+<button class="close" id="aboutClose">×</button><h2>Sobre o Pombator</h2>
+<p>O Pombator é um mini-game arcade com Pombo Coins (P$), uma moeda virtual fictícia. Não há dinheiro real, depósitos ou saques. O objetivo é apostar P$, voar, resgatar durante o voo e desbloquear conquistas.</p>
+<div class="info"><div><b>Saldo inicial</b><span>P$ 1.000,00</span></div><div><b>Eventos</b><span>Voos normais e voos épicos</span></div><div><b>Progresso</b><span>Histórico, estatísticas e conquistas</span></div></div>
+<p style="font-size:11px;color:#778189">Os resultados e Pombo Coins (P$) são apenas elementos de entretenimento do mini-game e não representam uma plataforma de apostas com dinheiro real.</p>
+</div></div>
+
+<script>
+let points=1000,mult=1,running=false,crash=0,start=0,raf=null,round=1,currentEpic=false,cashed=false;
+let bet=1,best=0,flights=0,epics=0,longest=0,scoreGain=0,history=[],roundStake=0,cashedAmount=0;
+let audioCtx=null,flightOsc=null,flightGain=null;
+const $=id=>document.getElementById(id);
+const money=n=>'P$ '+Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt=n=>money(n);
+
+function render(){
+  $('balanceTop').textContent=fmt(points); $('balanceMain').textContent=fmt(points);
+  $('betAvailable').textContent='Saldo disponível: '+fmt(points); $('best').textContent=best.toFixed(2)+'x';
+  $('flights').textContent=flights; $('epics').textContent=epics;
+  $('longest').textContent=longest.toFixed(1)+'s'; $('scoreGain').textContent=fmt(scoreGain);
+  updateActionButton();
+}
+function addHistory(v,epic=false){
+  history.unshift({v,epic});history=history.slice(0,8);
+  $('history').innerHTML=history.map(h=>`<span class="chip ${h.epic?'epic':''}">${h.v.toFixed(2)}x${h.epic?' ★':''}</span>`).join('');
+}
+const achievements=[['🐣','Primeiro voo','Complete seu primeiro voo'],['🚀','Alta altitude','Alcance 5x'],['🌙','Muito longe','Alcance 10x'],['⭐','Voo épico','Encontre um voo especial'],['🏆','Recordista','Supere seu recorde'],['🛸','Cosmos','Alcance 50x']];
+const unlocked=new Set();
+function unlock(i){if(unlocked.has(i))return;unlocked.add(i);renderAchievements()}
+function renderAchievements(){$('achievements').innerHTML=achievements.map((a,i)=>`<div class="achievement ${unlocked.has(i)?'':'locked'}"><div class="badge">${a[0]}</div><div><b>${a[1]}</b><span>${a[2]}</span></div></div>`).join('')}
+function startAudio(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume()}catch(e){}}
+function tone(freq,dur=.12,type='sine',vol=.05){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain(),t=audioCtx.currentTime;o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+dur+.03)}
+function startFlightSound(){startAudio();if(!audioCtx)return;const t=audioCtx.currentTime;flightOsc=audioCtx.createOscillator();flightGain=audioCtx.createGain();flightOsc.type='triangle';flightOsc.frequency.value=100;flightGain.gain.value=.025;flightOsc.connect(flightGain).connect(audioCtx.destination);flightOsc.start(t)}
+function updateSound(){if(flightOsc&&audioCtx)flightOsc.frequency.setTargetAtTime(Math.min(720,100+mult*38),audioCtx.currentTime,.08)}
+function stopFlightSound(){if(flightOsc&&audioCtx){try{flightGain.gain.setTargetAtTime(.0001,audioCtx.currentTime,.05);flightOsc.stop(audioCtx.currentTime+.15)}catch(e){}}flightOsc=flightGain=null}
+
+function chooseEndpoint(){
+  if(Math.random()<.035){currentEpic=true;return +(40+Math.random()*60).toFixed(2)}
+  currentEpic=false;const r=Math.random();
+  if(r<.62)return +(1.5+Math.random()*2).toFixed(2);
+  if(r<.88)return +(3.5+Math.random()*3.5).toFixed(2);
+  if(r<.97)return +(7+Math.random()*8).toFixed(2);
+  return +(15+Math.random()*20).toFixed(2);
+}
+function sanitizeBet(){
+  let v=Number.parseFloat($('betInput').value);
+  if(!Number.isFinite(v))v=.01;
+  v=Math.max(.01,Math.min(points,Math.round(v*100)/100)); bet=v;
+  $('betInput').value=v.toFixed(2); return v;
+}
+function updateActionButton(){
+  const btn=$('play');
+  if(running && !cashed){
+    btn.disabled=false;
+    btn.classList.add('cashoutMode');
+    btn.textContent='RESGATAR '+money(roundStake*mult);
+  }else{
+    btn.classList.remove('cashoutMode');
+    btn.disabled=false;
+    btn.textContent='APOSTAR '+money(Math.max(.01,bet));
+  }
+}
+function finish(){
+  if(!running)return;
+  running=false;stopFlightSound();flights++;if(currentEpic)epics++;
+  const duration=(performance.now()-start)/1000;longest=Math.max(longest,duration);
+  const oldBest=best;best=Math.max(best,mult);addHistory(mult,currentEpic);
+  if(!cashed){
+    $('status').textContent=(currentEpic?'★ VOO ÉPICO! ':'')+'O voo terminou em '+mult.toFixed(2)+'x • aposta perdida: '+money(roundStake);
+    $('status').className='status bad';cashedAmount=0;
+  }else{
+    $('status').textContent=(currentEpic?'★ VOO ÉPICO! ':'')+'Resgatado em '+mult.toFixed(2)+'x • +'+money(cashedAmount);
+    $('status').className='status '+(currentEpic?'gold':'good');
+  }
+  if(flights===1)unlock(0);if(mult>=5)unlock(1);if(mult>=10)unlock(2);if(currentEpic)unlock(3);
+  if(mult>=50)unlock(5);if(mult>oldBest)unlock(4);
+  $('game').classList.remove('flash');void $('game').offsetWidth;$('game').classList.add('flash');
+  tone(currentEpic?880:620,.14,'sine',.08);setTimeout(()=>tone(currentEpic?1320:820,.18,'triangle',.07),80);
+  $('play').disabled=false;$('play').textContent='APOSTAR '+money(Math.max(.01,bet));render();
+}
+function cashout(){
+  if(!running||cashed)return;
+  cashed=true;const payout=Math.round(roundStake*mult*100)/100;
+  points+=payout;cashedAmount=payout;scoreGain+=payout;
+  $('status').textContent='RESGATE confirmado em '+mult.toFixed(2)+'x • +'+money(payout);
+  $('status').className='status good';tone(980,.12,'triangle',.08);render();
+}
+function startRound(){
+  startAudio();if(running)return;
+  const stake=sanitizeBet();
+  if(stake<.01||stake>points){$('status').textContent='Saldo insuficiente para essa aposta em Pombo Coins.';$('status').className='status bad';return}
+  roundStake=stake;points-=stake;cashed=false;cashedAmount=0;running=true;mult=1;crash=chooseEndpoint();
+  start=performance.now();round++;$('roundBadge').textContent='VOO #'+String(round).padStart(3,'0');
+  $('status').textContent=currentEpic?'★ O POMBO ENCONTROU UMA ROTA ÉPICA!':'O pombo está voando...';
+  $('status').className='status '+(currentEpic?'gold':'');
+  $('play').disabled=true;$('play').textContent='VOO EM ANDAMENTO';startFlightSound();tone(300,.1,'triangle',.05);
+  render();raf=requestAnimationFrame(loop);
+}
+function loop(t){
+  if(!running)return;
+  const s=(t-start)/1000;mult=1+.62*s+.095*s*s;$('mult').innerHTML=mult.toFixed(2)+'<span class="x">x</span>';
+  const q=Math.min(1,s/7),u=1-q,p0={x:2,y:97},p1={x:25,y:96},p2={x:52,y:61},p3={x:99,y:10};
+  const x=u*u*u*p0.x+3*u*u*q*p1.x+3*u*q*q*p2.x+q*q*q*p3.x,y=u*u*u*p0.y+3*u*u*q*p1.y+3*u*q*q*p2.y+q*q*q*p3.y;
+  const dx=3*u*u*(p1.x-p0.x)+6*u*q*(p2.x-p1.x)+3*q*q*(p3.x-p2.x),dy=3*u*u*(p1.y-p0.y)+6*u*q*(p2.y-p1.y)+3*q*q*(p3.y-p2.y);
+  $('pigeon').style.left=x+'%';$('pigeon').style.top=y+'%';$('pigeon').style.transform=`translate(-50%,-50%) rotate(${Math.atan2(-dy,dx)*180/Math.PI}deg)`;
+  $('board').classList.toggle('speed',mult>=3);$('board').classList.toggle('warning',mult>=Math.max(5,crash-.9));updateSound();updateActionButton();
+  if(mult>=crash){mult=crash;$('mult').innerHTML=mult.toFixed(2)+'<span class="x">x</span>';finish();return}
+  raf=requestAnimationFrame(loop)
+}
+$('betInput').addEventListener('change',()=>{if(running){$('betInput').value=bet.toFixed(2);return}sanitizeBet();render();updateActionButton()});
+$('minusBet').onclick=()=>{if(running)return;bet=Math.max(.01,Math.round((sanitizeBet()-.10)*100)/100);$('betInput').value=bet.toFixed(2);updateActionButton()};
+$('plusBet').onclick=()=>{if(running)return;bet=Math.min(points,Math.round((sanitizeBet()+.10)*100)/100);$('betInput').value=bet.toFixed(2);updateActionButton()};
+document.querySelectorAll('.quickBet').forEach(b=>b.onclick=()=>{
+  if(running)return;
+  const add=Number(b.dataset.add);
+  bet=Math.min(points,Math.round((sanitizeBet()+add)*100)/100);
+  $('betInput').value=bet.toFixed(2);
+  updateActionButton();
+});
+$('play').onclick=()=>{
+  if(running && !cashed) cashout();
+  else startRound();
+};
+render();renderAchievements();addHistory(1,false);updateActionButton();
+$('aboutBtn').onclick=()=>{$('aboutModal').classList.add('open');$('aboutModal').setAttribute('aria-hidden','false')};
+$('aboutClose').onclick=()=>{$('aboutModal').classList.remove('open');$('aboutModal').setAttribute('aria-hidden','true')};
+$('aboutModal').onclick=e=>{if(e.target===$('aboutModal'))$('aboutClose').click()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('aboutModal').classList.contains('open'))$('aboutClose').click()});
+</script>
+</body>
+</html>
