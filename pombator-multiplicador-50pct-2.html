@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#101417">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pombator • Arcade">
+<meta property="og:description" content="Pombator — mini-game arcade com Pombo Coins (P$)">
+<meta property="og:image" content="https://aguia63x.github.io/pombator/pombator-social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo oficial do Pombator">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pombator • Arcade">
+<meta name="twitter:description" content="Pombator — mini-game arcade com Pombo Coins (P$)">
+<meta name="twitter:image" content="https://aguia63x.github.io/pombator/pombator-social-card.png">
+<title>Pombator • Arcade</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#101417;--panel:#191e22;--panel2:#11161a;--line:#2a3035;--muted:#8d969d;--text:#f4f5f6;--green:#20c900;--green2:#16b900;--pink:#ff174d;--red:#d9003d;--blue:#36a5ff}
+html,body{margin:0;background:#0c1013;color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100%;overscroll-behavior:none}
+body{min-height:100vh}.app{width:100%;max-width:720px;margin:auto;min-height:100vh;background:linear-gradient(#111619,#0d1114);overflow:hidden;padding-bottom:22px}
+.top{height:62px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:#111619;border-bottom:1px solid #252b2f}
+.brand{display:flex;align-items:center;gap:7px}.brand svg{width:43px;height:43px;filter:drop-shadow(0 0 7px #ff174955)}.logo{font-size:31px;font-weight:900;font-style:italic;letter-spacing:-2px;color:#ff174d;text-shadow:0 2px 0 #78051f}
+.wallet{display:flex;align-items:center;gap:8px;color:#f1f2f3;font-size:21px;font-weight:700}.coin{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f6c632;color:#513d00;box-shadow:inset 0 0 0 1px #fff3;font-size:16px}.menu{font-size:30px;line-height:1;color:#aeb4b8;margin-left:9px}
+.recent{height:42px;display:flex;align-items:center;gap:20px;padding:0 22px;white-space:nowrap;overflow:hidden;background:#101417;border-bottom:1px solid #20262a;color:#67b8ff;font-size:17px;font-weight:700}.recent .r1{color:#bd78ff}.recent .r2{color:#49b4ff}.recent .r3{color:#e05fff}.recent .r4{color:#56c0ff}.recent .r5{color:#d8d8d8}.recent .more{margin-left:auto;background:#30363a;color:#c8cdd0;border-radius:20px;padding:4px 11px;font-size:18px}
+.boardWrap{padding:0 9px}.board{height:300px;position:relative;overflow:hidden;border:1px solid #32383c;border-radius:26px;background:#050709;box-shadow:0 8px 22px #000b;margin-top:0}.board svg.bg{position:absolute;inset:0;width:100%;height:100%}.curveGlow{filter:url(#glow)}#curvePath,#curveCore{stroke-dasharray:1;stroke-dashoffset:1;vector-effect:non-scaling-stroke;shape-rendering:geometricPrecision}#curveTip{opacity:0;transition:opacity .15s ease}.board.running #curveTip{opacity:1;animation:curveTipPulse .55s ease-in-out infinite alternate}@keyframes curveTipPulse{to{r:7;opacity:.72}}
+.mult{position:absolute;z-index:5;inset:0;display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:86px;font-weight:900;letter-spacing:-4px;text-shadow:0 4px 24px #000,0 0 22px #fff1}.mult .x{font-size:.47em;opacity:.85;letter-spacing:-1px}
+.pigeon{position:absolute;z-index:8;width:86px;height:72px;transform:translate(-50%,-50%);pointer-events:none;will-change:left,top,transform,filter;filter:drop-shadow(0 0 9px #ff174977) drop-shadow(0 7px 7px #000b)}.pigeon svg{width:100%;height:100%;overflow:visible}.wing{transform-box:fill-box;transform-origin:55% 70%;animation:wing .15s ease-in-out infinite alternate}@keyframes wing{to{transform:rotate(-16deg) translateY(-3px)}}.pigeon.flying{animation:pigeonBob .34s ease-in-out infinite alternate}@keyframes pigeonBob{from{margin-top:-1px}to{margin-top:2px}}.pigeon.takeoff{animation:pigeonTakeoff .12s ease-in-out infinite alternate}@keyframes pigeonTakeoff{from{margin-top:2px}to{margin-top:-3px}}.pigeon.flee{animation:none;filter:drop-shadow(0 0 14px #ff1749cc) drop-shadow(0 8px 10px #000)}
+/* Fundo com sensação de deslocamento durante o voo */
+.motionLayer{position:absolute;inset:-35%;z-index:1;pointer-events:none;opacity:0;transition:opacity .25s ease;mix-blend-mode:screen;will-change:transform,background-position}
+.motionFar{background:radial-gradient(ellipse at 18% 22%,#ffffff10 0 2%,transparent 3%),radial-gradient(ellipse at 72% 68%,#ffffff0b 0 3%,transparent 4%),repeating-linear-gradient(160deg,transparent 0 34px,#ffffff08 35px 37px,transparent 38px 92px);background-size:430px 250px,560px 320px,100% 100%;animation:windFar 13s linear infinite}
+.motionMid{background:repeating-linear-gradient(158deg,transparent 0 56px,#8ec7dc0d 57px 62px,transparent 63px 130px),repeating-linear-gradient(158deg,transparent 0 105px,#ffffff08 106px 109px,transparent 110px 220px);animation:windMid 6.5s linear infinite}
+.motionNear{background:repeating-linear-gradient(157deg,transparent 0 88px,#ffffff12 89px 95px,transparent 96px 170px);animation:windNear 2.4s linear infinite}
+.board.running .motionLayer{opacity:1}
+.board.running .motionNear{animation-duration:var(--wind-near,2.4s)}
+.board.running .motionMid{animation-duration:var(--wind-mid,6.5s)}
+.board.running .motionFar{animation-duration:var(--wind-far,13s)}
+@keyframes windFar{from{background-position:0 0,0 0,0 0;transform:translate3d(0,0,0)}to{background-position:-180px 70px,-120px 45px,-90px 35px;transform:translate3d(-1.5%,1%,0)}}
+@keyframes windMid{from{background-position:0 0,0 0;transform:translate3d(0,0,0)}to{background-position:-260px 95px,-360px 125px;transform:translate3d(-3%,2%,0)}}
+@keyframes windNear{from{background-position:0 0;transform:translate3d(0,0,0)}to{background-position:-520px 180px;transform:translate3d(-7%,3%,0)}}
+.board.running:before{content:"";position:absolute;z-index:2;inset:-40%;background:conic-gradient(from 220deg,transparent 0 38%,#fff1 44%,transparent 51% 100%);animation:sweep .7s linear infinite;pointer-events:none}@keyframes sweep{to{transform:translateX(35%) rotate(-6deg)}}
+.board.hot .mult{animation:pulse .24s ease-in-out infinite alternate}@keyframes pulse{to{transform:scale(1.045);text-shadow:0 0 35px #ff174d99}}
+.live{position:absolute;z-index:10;left:14px;top:14px;padding:7px 11px;border-radius:18px;background:#111619d9;border:1px solid #ffffff12;font-size:11px;font-weight:800;letter-spacing:.5px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#1fe000;box-shadow:0 0 9px #1fe000;margin-right:6px}.round{position:absolute;z-index:10;right:14px;top:14px;padding:7px 11px;border-radius:18px;background:#111619d9;border:1px solid #ffffff12;color:#9fa8ae;font-size:11px;font-weight:800}
+.status{height:0;position:absolute;left:0;right:0;bottom:8px;z-index:20;text-align:center;font-size:13px;font-weight:700;color:#c9ced2;pointer-events:none}.status.good{color:#8cff55}.status.bad{color:#ff6686}
+.controls{margin:7px 9px 0;padding:7px 8px 10px;border-radius:27px;background:#1a1f23;box-shadow:0 5px 18px #0008;border:1px solid #242b30}.modeTabs{height:48px;background:#11161a;border-radius:29px;padding:5px;display:flex;margin-bottom:10px}.modeTab{flex:1;border:0;border-radius:25px;background:transparent;color:#8d969c;font-size:17px;font-weight:700}.modeTab.active{background:#343b40;color:#eef0f1;box-shadow:inset 0 1px 2px #fff1}
+.betCard{position:relative;background:#11161a;border-radius:17px;padding:8px 9px 7px;margin-bottom:7px;border:1px solid #272e33}.betCard:last-child{margin-bottom:0}.betCard.activeBet{box-shadow:0 0 0 1px #21d80055 inset}.betHeader{height:26px;display:flex;align-items:center;justify-content:space-between;color:#9aa3a8;font-size:13px;font-weight:700}.autoWrap{display:flex;align-items:center;gap:9px;color:#a8afb4;font-size:12px}.switch{width:40px;height:24px;border-radius:14px;background:#2b3135;border:1px solid #3b4247;position:relative;cursor:pointer}.switch:before{content:"";position:absolute;width:18px;height:18px;left:2px;top:2px;border-radius:50%;background:#aeb3b6;transition:.15s}.switch.on{background:#2c9b15}.switch.on:before{left:18px;background:#fff}.autoTarget{height:24px;min-width:55px;padding:0 8px;border:0;border-radius:12px;background:#252b2f;color:#e4e6e7;font-weight:800}.autoTarget:disabled{opacity:.45}
+.betBody{display:grid;grid-template-columns:210px 1fr;gap:8px;align-items:center}.amountArea{display:flex;align-items:center;gap:8px}.adjust{width:38px;height:40px;border:0;border-radius:13px;background:#242b30;color:#dfe2e4;font-size:28px;font-weight:500}.amountInput{width:100%;height:40px;border:1px solid #2d3439;border-radius:13px;background:#080d10;color:#f4f5f6;text-align:center;font-size:23px;font-weight:800;outline:none}.amountInput:focus{border-color:#59636b}.quick{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.quick button{height:27px;border:0;border-radius:10px;background:#20262b;color:#b8bec2;font-size:13px;font-weight:700}.betButton{height:58px;width:100%;border:1px solid #64ff42;border-radius:17px;background:linear-gradient(#21cf08,#14b900);box-shadow:0 2px 8px #0b730088,inset 0 1px #ffffff55;color:white;font-size:21px;font-weight:800;line-height:1.05;text-shadow:0 1px 2px #0007}.betButton.cashout{background:linear-gradient(#f5c92d,#db9b00);border-color:#ffe477;color:#251d00}.betButton:disabled{opacity:.58}.autoLine{height:34px;display:flex;align-items:center;justify-content:flex-end;gap:6px;color:#8e979d;font-size:12px}.autoLine strong{color:#d9dde0}.balanceLine{display:flex;justify-content:space-between;margin:6px 2px 0;color:#899299;font-size:12px}.balanceLine b{color:#b7bdc1}.footerNote{padding:14px 18px 0;text-align:center;color:#657077;font-size:11px;line-height:1.45}
+.modal{position:fixed;inset:0;display:none;place-items:center;background:#000b;z-index:100;padding:18px}.modal.open{display:grid}.modalCard{max-width:470px;width:100%;background:#171d21;border:1px solid #30383e;border-radius:22px;padding:22px;color:#d7dbde;box-shadow:0 20px 60px #000}.modalCard h2{margin:0 0 10px;color:#fff}.modalCard p{line-height:1.5;color:#aeb6bb;font-size:14px}.close{float:right;border:0;background:#2a3035;color:#fff;border-radius:50%;width:34px;height:34px;font-size:24px}.about{display:block;margin:14px auto 0;background:none;border:0;color:#7e898f;font-size:12px}
+@media(max-width:430px){
+  .top{height:58px;padding:0 10px}.logo{font-size:25px}.brand svg{width:35px;height:35px}.wallet{font-size:17px;gap:6px}.coin{width:25px;height:25px}.menu{font-size:27px;margin-left:6px}
+  .recent{height:38px;gap:14px;padding:0 14px;font-size:14px}
+  .boardWrap{padding:0 7px}.board{height:270px;border-radius:20px}
+  .mult{font-size:60px}.x{font-size:.48em}.pigeon{width:66px;height:55px}.live{left:10px;top:10px;padding:6px 9px;font-size:10px}.round{right:10px;top:10px;padding:6px 9px;font-size:10px}.status{bottom:5px;font-size:11px}
+  .controls{margin:6px 7px 0;padding:6px 7px 9px;border-radius:20px}.modeTabs{height:44px;padding:4px;margin-bottom:7px}.modeTab{font-size:16px}
+  .betCard{border-radius:15px;padding:7px 8px 6px;margin-bottom:6px}.betHeader{height:24px;font-size:11px}.autoWrap{gap:6px;font-size:11px}.switch{width:38px;height:22px}.switch:before{width:16px;height:16px}.switch.on:before{left:18px}.autoTarget{height:22px;min-width:52px;font-size:13px;padding:0 7px}
+  .betBody{grid-template-columns:202px 1fr;gap:7px}.amountArea{gap:5px}.adjust{width:36px;height:38px;border-radius:11px;font-size:25px}.amountInput{height:38px;border-radius:11px;font-size:21px}.quick{gap:5px;margin-top:4px}.quick button{height:26px;border-radius:9px;font-size:12px}.betButton{height:56px;border-radius:15px;font-size:18px}.balanceLine{margin:5px 2px 0;font-size:11px}.footerNote{padding:10px 14px 0;font-size:10px}.about{margin:10px auto 0;font-size:11px}
+}
+@media(max-width:370px){
+  .logo{font-size:23px}.wallet{font-size:15px}.board{height:245px}.mult{font-size:54px}.betBody{grid-template-columns:178px 1fr}.betButton{font-size:16px}.amountInput{font-size:19px}.adjust{width:32px}.quick button{font-size:11px}
+}
+
+/* Painel único para celular */
+@media (max-width:600px){
+  .controls{padding:7px 10px 14px;}
+  .modeTabs{height:48px;margin-bottom:7px;}
+  .betCard{padding:8px 8px 7px;margin-bottom:0;}
+  .betHeader{height:28px;}
+  .betBody{grid-template-columns:178px 1fr;gap:7px;}
+  .betButton{height:58px;font-size:17px;}
+  .balanceLine{margin-top:5px;}
+  .footerNote{padding-top:10px;}
+}
+@media (max-width:380px){
+  .betBody{grid-template-columns:166px 1fr;gap:6px;}
+  .adjust{width:32px;}
+  .amountInput{font-size:18px;}
+  .betButton{font-size:15px;}
+}
+
+
+/* Layout responsivo robusto: celular, tablet, desktop e aumento de fonte */
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+body{
+  overflow-x:hidden;
+}
+.app{width:100%;max-width:860px;min-width:0;overflow:visible;}
+.top,.recent,.controls,.boardWrap{min-width:0;}
+.brand,.wallet,.betHeader,.autoWrap,.betBody,.amountArea,.balanceLine{min-width:0;}
+.logo,.wallet,.recent,.betHeader,.autoWrap,.amountInput,.betButton,.balanceLine,.footerNote,.about{overflow:hidden;}
+.logo{white-space:nowrap;text-overflow:ellipsis;}
+.wallet{white-space:nowrap;}
+.betHeader{gap:8px;}
+.betHeader>span:first-child{flex:0 0 auto;}
+.autoWrap{min-width:0;white-space:nowrap;}
+.betBody{grid-template-columns:minmax(145px,42%) minmax(0,1fr);}
+.betBody>div{min-width:0;}
+.amountArea{min-width:0;}
+.amountInput{min-width:0;}
+.betButton{min-width:0;}
+.status{height:auto;max-width:92%;left:4%;right:4%;bottom:4px;line-height:1.2;text-overflow:ellipsis;white-space:nowrap;}
+
+/* O gráfico ocupa menos altura em telas estreitas e cresce moderadamente no PC. */
+.board{height:clamp(205px,31vw,300px);aspect-ratio:2.05/1;}
+.mult{font-size:clamp(52px,10vw,86px);}
+
+/* O painel usa o espaço disponível sem depender de larguras fixas. */
+.controls{width:calc(100% - 18px);margin-left:auto;margin-right:auto;}
+
+@media (max-width:600px){
+  .app{max-width:600px;}
+  .top{height:58px;padding:0 10px;}
+  .brand{gap:5px;}
+  .brand svg{width:34px;height:34px;flex:0 0 34px;}
+  .logo{font-size:clamp(22px,6vw,27px);letter-spacing:-1.5px;}
+  .wallet{font-size:clamp(15px,4.4vw,18px);gap:5px;}
+  .coin{width:25px;height:25px;flex:0 0 25px;}
+  .menu{font-size:27px;margin-left:3px;}
+  .recent{height:38px;gap:14px;padding:0 12px;font-size:clamp(13px,3.8vw,15px);}
+  .boardWrap{padding:0 7px;}
+  .board{width:100%;height:auto;min-height:0;aspect-ratio:2.05/1;border-radius:19px;}
+  .mult{font-size:clamp(50px,14vw,66px);letter-spacing:-3px;}
+  .pigeon{width:62px;height:52px;}
+  .live,.round{top:9px;font-size:9px;padding:6px 8px;}
+  .status{font-size:11px;}
+  .controls{margin-top:6px;padding:6px 7px 10px;border-radius:20px;}
+  .modeTabs{height:45px;margin-bottom:7px;padding:4px;}
+  .modeTab{font-size:clamp(15px,4.2vw,17px);}
+  .betCard{padding:8px 8px 7px;}
+  .betHeader{height:auto;min-height:28px;align-items:center;}
+  .betHeader>span:first-child{font-size:12px;}
+  .autoWrap{font-size:11px;gap:5px;}
+  .switch{width:38px;height:22px;flex:0 0 38px;}
+  .switch:before{width:16px;height:16px;}
+  .switch.on:before{left:18px;}
+  .autoTarget{width:58px;min-width:50px;height:22px;font-size:13px;}
+  .betBody{grid-template-columns:minmax(145px,42%) minmax(0,1fr);gap:7px;}
+  .amountArea{gap:5px;}
+  .adjust{width:36px;height:38px;flex:0 0 36px;font-size:25px;}
+  .amountInput{height:38px;font-size:clamp(18px,5.2vw,22px);}
+  .quick{gap:5px;margin-top:5px;}
+  .quick button{height:27px;font-size:12px;}
+  .betButton{height:58px;border-radius:15px;font-size:clamp(16px,4.6vw,19px);}
+  .balanceLine{font-size:11px;margin-top:5px;}
+  .footerNote{font-size:10px;padding:10px 12px 0;}
+  .about{font-size:11px;margin-top:9px;}
+}
+
+/* Em celulares muito estreitos: cabe tudo sem esmagar texto. */
+@media (max-width:360px){
+  .top{padding:0 7px;}
+  .logo{font-size:21px;}
+  .wallet{font-size:14px;}
+  .recent{gap:11px;padding:0 9px;font-size:12px;}
+  .betHeader{gap:5px;}
+  .autoWrap{font-size:10px;gap:4px;}
+  .autoTarget{width:52px;min-width:46px;font-size:12px;padding:0 5px;}
+  .betBody{grid-template-columns:minmax(137px,43%) minmax(0,1fr);gap:5px;}
+  .adjust{width:32px;flex-basis:32px;}
+  .betButton{font-size:15px;}
+}
+
+/* Desktop/tablet: aproveita a largura sem deixar o gráfico gigante. */
+@media (min-width:601px){
+  .top{height:70px;}
+  .recent{height:48px;}
+  .boardWrap{padding:0 14px;}
+  .controls{margin-top:10px;padding:10px 12px 14px;}
+  .betBody{grid-template-columns:minmax(230px,40%) minmax(0,1fr);}
+  .board{aspect-ratio:2.15/1;}
+}
+
+/* Evita que configurações de acessibilidade/zoom causem sobreposição. */
+@media (min-width:601px){
+  .betHeader{font-size:14px;}
+  .autoWrap{font-size:13px;}
+}
+
+
+/* Countdown de decolagem */
+.countdown{position:absolute;z-index:30;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;background:radial-gradient(circle at center,#08131dcc 0%,#02040555 42%,transparent 72%)}
+.countdown.show{display:flex}
+.countdownNum{font-size:clamp(96px,24vw,190px);font-weight:1000;line-height:1;color:#fff;text-shadow:0 0 12px #fff,0 0 35px #ff174d,0 8px 30px #000;animation:countPop .82s cubic-bezier(.2,.8,.2,1) both}
+.countdown.go .countdownNum{font-size:clamp(38px,10vw,78px);color:#8cff55;text-shadow:0 0 12px #8cff55,0 0 35px #20c900,0 8px 30px #000}
+@keyframes countPop{0%{opacity:0;transform:scale(1.7)}18%{opacity:1;transform:scale(1)}72%{opacity:1;transform:scale(1.04)}100%{opacity:0;transform:scale(.72)}}
+</style>
+
+<style id="videoRefinement">
+/* Pombator — acabamento visual inspirado diretamente na referência vertical.
+   A lógica/RTP não é alterada por este bloco: somente apresentação, movimento e layout. */
+body{background:#050607;color:#eef0f2;}
+.app{max-width:600px;background:#050607;}
+.top{height:58px;background:#090b0d;border-bottom:1px solid #181c20;}
+.brand{gap:7px}.logo{font-weight:950;letter-spacing:-1.6px}.wallet{font-weight:850;}
+.recent{height:37px;background:#090b0d;border-bottom:1px solid #171b1f;gap:15px;white-space:nowrap;overflow:hidden;}
+.recent span{font-weight:800;text-shadow:0 0 8px currentColor;}
+.boardWrap{padding:0 5px;margin-top:5px;}
+.board{height:auto;min-height:0;aspect-ratio:1.245/1;border-radius:23px;border:1px solid #24282c;background:#020304;box-shadow:0 8px 28px #000c,inset 0 1px #ffffff08;}
+.board:after{content:"";position:absolute;z-index:2;inset:8% 8% 18% 8%;pointer-events:none;background:radial-gradient(circle at 53% 45%,#4b9dff22 0%,#7047d414 18%,transparent 48%);filter:blur(12px);opacity:.85;transition:opacity .2s;}
+.board.running:after{animation:refGlow 1.8s ease-in-out infinite alternate;}
+@keyframes refGlow{from{transform:scale(.92);opacity:.48}to{transform:scale(1.08);opacity:.9}}
+.board svg.bg{z-index:0;}
+.board svg.bg rect{fill:#030506!important;}
+.board svg.bg g{opacity:.72;}
+.board svg.bg g path{fill:#0b0d0f;}
+.mult{z-index:5;font-size:clamp(68px,17vw,102px);font-weight:950;letter-spacing:-5px;padding-bottom:3%;text-shadow:0 2px 2px #000,0 0 10px #fff,0 0 28px #68b7ff88,0 0 55px #4c8cff55;}
+.mult .x{font-size:.48em;letter-spacing:-2px;}
+.board.hot .mult{animation:refMultHot .3s ease-in-out infinite alternate;}
+@keyframes refMultHot{to{transform:scale(1.035);text-shadow:0 2px 2px #000,0 0 12px #fff,0 0 34px #d56bff99,0 0 70px #ff2b6a66}}
+.pigeon{z-index:8;width:clamp(78px,22vw,112px);height:auto;filter:drop-shadow(0 0 9px #ff1749aa) drop-shadow(0 7px 9px #000c);}
+.pigeon.flying{animation:pigeonBobRef .22s ease-in-out infinite alternate;}
+@keyframes pigeonBobRef{from{margin-top:-2px}to{margin-top:3px}}
+.board.running .curvePath{}
+#curvePath{stroke:#ff164d!important;stroke-width:6!important;filter:url(#glow);}
+#curveCore{stroke:#ff496f!important;stroke-width:2.5!important;}
+#curveTip{r:6!important;}
+.controls{margin:5px 5px 0;width:calc(100% - 10px);padding:6px 7px 9px;border-radius:23px;background:#191b1e;border:1px solid #24272b;box-shadow:0 7px 22px #000b;}
+.modeTabs{height:44px;margin-bottom:7px;background:#0e1013;border-radius:24px;padding:4px;}
+.modeTab{font-size:16px;font-weight:750;color:#777d82;}
+.modeTab.active{background:#373b40;color:#f1f2f3;box-shadow:inset 0 1px 2px #fff1,0 1px 4px #0008;}
+.betCard{margin:0;padding:6px 7px 7px;background:#17191c;border:1px solid #24282c;border-radius:18px;}
+.betHeader{display:none;}
+.betBody{grid-template-columns:39% minmax(0,1fr);gap:8px;align-items:center;}
+.amountArea{gap:5px;background:#0f1114;border-radius:17px;padding:3px;}
+.adjust{width:34px;height:35px;flex:0 0 34px;border-radius:15px;background:#202328;color:#b7bcc0;font-size:25px;}
+.amountInput{height:35px;border:0;background:transparent;font-size:20px;color:#dfe2e4;}
+.quick{gap:5px;margin-top:5px;}
+.quick button{height:27px;border-radius:12px;background:#111316;color:#777d82;font-size:12px;}
+.betButton{height:100px;border-radius:16px;font-size:25px;line-height:1.15;border:1px solid #79ff5c;background:linear-gradient(#20d20b,#12a900);box-shadow:0 2px 8px #0008,inset 0 1px #fff7;}
+.betButton.cashout{background:linear-gradient(#f39a00,#e67c00);border-color:#ffca64;color:#fff;}
+.balanceLine{margin:5px 2px 0;font-size:11px;}
+.footerNote{padding:8px 10px 0;font-size:10px;}
+.about{margin:8px auto 0;font-size:11px;}
+.status{bottom:7px;font-size:11px;}
+.countdown{background:radial-gradient(circle at center,#16416ecc 0%,#02040588 38%,transparent 72%);}
+.countdownNum{text-shadow:0 0 12px #fff,0 0 32px #55aaff,0 8px 30px #000;}
+.countdown.go .countdownNum{color:#8cff55;text-shadow:0 0 12px #8cff55,0 0 35px #20c900,0 8px 30px #000;}
+@media(max-width:430px){
+ .top{height:56px}.recent{height:36px;gap:14px}.boardWrap{padding:0 5px}.board{border-radius:21px;aspect-ratio:1.24/1;}
+ .mult{font-size:clamp(64px,18vw,84px)}.pigeon{width:clamp(72px,22vw,96px)}
+ .controls{margin-top:5px;width:calc(100% - 10px);padding:5px 6px 8px;border-radius:21px}.modeTabs{height:43px}.betCard{padding:6px}.betBody{grid-template-columns:40% minmax(0,1fr);gap:6px}.betButton{height:92px;font-size:22px}.adjust{width:31px;flex-basis:31px;height:34px}.amountInput{height:34px;font-size:19px}.quick button{height:26px;font-size:11px}.balanceLine{font-size:10px}
+}
+@media(max-width:360px){.board{aspect-ratio:1.20/1}.betButton{height:84px;font-size:20px}.betBody{grid-template-columns:41% minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="app" id="game">
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 100 100" aria-label="Pombator"><path d="M17 58C20 38 36 27 55 31c12 2 18 9 23 17l13-3-9 12c-4 13-17 21-35 20-15-1-25-7-30-19Z" fill="#d9dde0" stroke="#343b41" stroke-width="3"/><path d="M34 54c9-16 25-17 36-7-8 3-14 11-16 20-8-3-15-7-20-13Z" fill="#aeb6bc" stroke="#4b545b" stroke-width="2.5"/><path d="M22 54 8 47l9 14Z" fill="#8e979f"/><path d="M52 31c1-11 10-17 18-11 3-9 11-7 12 1 5 0 8 4 5 9-5 7-18 10-27 7Z" fill="#d9dde0" stroke="#343b41" stroke-width="3"/><circle cx="72" cy="25" r="3.5" fill="#111"/><path d="m87 29 10 3-10 4Z" fill="#f2a33a"/></svg>
+    <div class="logo">Pombator</div>
+  </div>
+  <div class="wallet"><span class="coin">★</span><span id="balanceTop">P$ 100,00</span><span class="menu">☰</span></div>
+</header>
+
+<div class="recent" id="recent"><span class="r1">2.24x</span><span class="r2">1.67x</span><span class="r3">11.57x</span><span class="r4">1.10x</span><span class="r5">1.00x</span><span class="r2">1.73x</span><span class="r1">2.23x</span><span class="r1">2.61x</span><span class="more">•••</span></div>
+
+<section class="boardWrap">
+<section class="board" id="board">
+  <div class="live"><span class="dot"></span>POMBATOR ARCADE</div>
+  <svg class="bg" viewBox="0 0 600 430" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <radialGradient id="bg"><stop stop-color="#10293a"/><stop offset=".43" stop-color="#071015"/><stop offset="1" stop-color="#020405"/></radialGradient>
+      <linearGradient id="fill" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#8b002d" stop-opacity=".86"/><stop offset="1" stop-color="#e50048" stop-opacity=".04"/></linearGradient>
+      <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <rect width="600" height="430" fill="url(#bg)"/>
+    <g opacity=".33" fill="#11171b"><path d="M0 430 0 0l105 430z"/><path d="M0 430 80 0l90 430z"/><path d="M0 430 205 0l40 430z"/><path d="M0 430 330 0l-5 430z"/><path d="M0 430 460 0l-55 430z"/><path d="M0 430 570 0l-80 430z"/></g>
+    <path id="areaPath" d="M0 425C105 423 180 390 255 328c82-69 144-138 228-204 48-37 83-58 117-77v383Z" fill="url(#fill)"/>
+    <path id="curvePath" d="M12 412.8C138 404.2 342 279.5 546 73.1" fill="none" stroke="#ff174d" stroke-width="5" stroke-linecap="round" filter="url(#glow)"/>
+    <path id="curveCore" d="M12 412.8C138 404.2 342 279.5 546 73.1" fill="none" stroke="#ff416f" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
+    <circle id="curveTip" cx="12" cy="412.8" r="4.8" fill="#ff3d6b" filter="url(#glow)"/>
+  </svg>
+  <div class="motionLayer motionFar"></div>
+  <div class="motionLayer motionMid"></div>
+  <div class="motionLayer motionNear"></div>
+  <div class="mult" id="mult">1.00<span class="x">x</span></div>
+  <div class="countdown" id="countdown" aria-live="assertive"><div class="countdownNum" id="countdownNum"></div></div>
+  <div class="pigeon" id="pigeon">
+    <svg viewBox="0 0 120 100">
+      <defs><linearGradient id="pigeonBody" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".62" stop-color="#d9dde0"/><stop offset="1" stop-color="#aeb5ba"/></linearGradient></defs>
+      <path d="M42 49C17 33 10 17 20 8c19 3 37 16 45 34-8-4-16-2-23 7Z" fill="#e2e5e8" stroke="#8f989e" stroke-width="1.5"/>
+      <path class="wing" d="M55 34c15-5 31 2 36 14-10 7-19 16-24 24-11-8-19-20-12-38Z" fill="#f5f6f7" stroke="#8e979d" stroke-width="1.5"/>
+      <path d="M31 54c1-17 14-27 32-25 13 1 21 9 28 19 6 9 15 11 23 9-6 13-18 21-32 20-14-1-24-9-31-15-6 6-14 6-22 2-5-3-4-8 2-10Z" fill="url(#pigeonBody)" stroke="#929ba1" stroke-width="1.6"/>
+      <path d="M48 42c-8-11-4-25 8-30 12-5 24 1 27 12 3 11-6 20-18 22-7 1-12 0-17-4Z" fill="url(#pigeonBody)" stroke="#929ba1" stroke-width="1.6"/>
+      <path d="M53 15c-5-7-2-12 4-13 1 5 4 8 7 10 0-7 4-10 9-8-2 5-1 8 2 11" fill="#79a947"/>
+      <circle cx="72" cy="21" r="5.2" fill="#252a2e"/><circle cx="73.5" cy="19.4" r="1.5" fill="#fff"/><path d="m78 25 25 5-24 6c5-4 5-7-1-11Z" fill="#ffb51b" stroke="#d38a00" stroke-width="1.2"/><path d="M31 58 8 49l12 15-14 3 26 3Z" fill="#c7cdd1"/>
+    </svg>
+  </div>
+  <div class="status" id="status"></div>
+</section>
+</section>
+
+
+
+
+<section class="controls">
+  <div class="modeTabs"><button class="modeTab active" type="button">Aposta</button><button class="modeTab" type="button">Automático</button></div>
+
+  <div class="betCard" id="betCard1">
+    <div class="betHeader"><span>APOSTA</span><span class="autoWrap">Resgate Automático <button class="switch" id="autoSwitch1" type="button" aria-label="Ativar resgate automático da aposta 1"></button><input class="autoTarget" id="autoTarget1" value="1.50" inputmode="decimal" aria-label="Multiplicador automático da aposta 1"></span></div>
+    <div class="betBody">
+      <div>
+        <div class="amountArea"><button class="adjust" id="minus1" type="button">−</button><input id="betInput1" class="amountInput" type="text" inputmode="decimal" min="0.01" step="0.01" value="10,00" aria-label="Valor da aposta 1"><button class="adjust" id="plus1" type="button">+</button></div>
+        <div class="quick"><button type="button" data-slot="1" data-add="10">10</button><button type="button" data-slot="1" data-add="20">20</button><button type="button" data-slot="1" data-add="50">50</button><button type="button" data-slot="1" data-add="100">100</button></div>
+      </div>
+      <button class="betButton" id="betButton1" type="button">APOSTAR<br>P$ 1</button>
+    </div>
+    <div class="balanceLine"><span>Saldo disponível</span><b id="slotBalance1">P$ 100,00</b></div>
+  </div>
+
+
+
+  <div class="footerNote">Pombo Coins (P$) são virtuais e fictícias. Não há dinheiro real, depósitos ou saques.</div>
+  <button class="about" id="aboutBtn" type="button">ⓘ Sobre o jogo</button>
+</section>
+</div>
+
+<div class="modal" id="aboutModal" aria-hidden="true"><div class="modalCard"><button class="close" id="aboutClose" type="button">×</button><h2>Sobre o Pombator</h2><p>O Pombator é um mini-game arcade com Pombo Coins (P$), uma moeda virtual fictícia. A interface foi inspirada em jogos de multiplicador, mas o conteúdo usa apenas saldo virtual.</p><p>Os resultados, saldos e resgates são apenas elementos de entretenimento e não representam uma plataforma de apostas com dinheiro real.</p><div style="margin-top:14px;padding-top:12px;border-top:1px solid #2a3034;text-align:center;color:#aeb5ba;font-size:13px;">
+<strong style="color:#f1f2f3;">Criado e desenvolvido por aguia63x</strong>
+</div></div></div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const money=cents=>'P$ '+(Math.max(0,Math.round(Number(cents)||0))/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const formatP$=cents=>(Math.max(0,Math.round(Number(cents)||0))/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+' P$';
+const clamp=(n,min,max)=>Math.min(max,Math.max(min,n));
+
+let pointsCents=10000;
+let round=1;
+let crash=0;
+let mult=1;
+let running=false;
+let roundStarting=false;
+let takeoffPrep=false;
+let deathAnimating=false;
+let startTime=0;
+let raf=0;
+let recent=[2.24,1.67,11.57,1.10,1.00,1.73,2.23,2.61];
+let flightSound=null;
+let audioCtx=null;
+let masterGain=null;
+let audioCompressor=null;
+let musicTimer=0;
+let musicGain=null;
+let musicNodes=new Set();
+
+const slots=[
+  {id:1,betCents:1000,placed:false,cashed:false,payoutCents:0,auto:false,target:1.50}
+];
+
+function renderBalance(){
+  const text=money(pointsCents);
+  $('balanceTop').textContent=text;
+  $('slotBalance1').textContent=text;
+}
+function renderRecent(){
+  $('recent').innerHTML=recent.slice(0,12).map((v,i)=>`<span class="r${(i%4)+1}">${v.toFixed(2)}x</span>`).join('')+'<span class="more">•••</span>';
+}
+function renderSlot(slot){
+  const input=$('betInput'+slot.id),button=$('betButton'+slot.id),card=$('betCard'+slot.id),sw=$('autoSwitch'+slot.id),target=$('autoTarget'+slot.id);
+  input.value=(slot.betCents/100).toFixed(2).replace('.',',');
+  target.value=slot.target.toFixed(2);
+  sw.classList.toggle('on',slot.auto);
+  target.disabled=!slot.auto;
+  card.classList.toggle('activeBet',slot.placed&&!slot.cashed);
+  if(slot.placed&&!slot.cashed){
+    button.classList.add('cashout');
+    button.disabled=false;
+    button.innerHTML='RESGATAR<br>'+formatP$(Math.round(slot.betCents*mult));
+  }else if(slot.placed&&slot.cashed){
+    button.classList.remove('cashout');
+    button.disabled=true;
+    button.innerHTML='RESGATADO<br>'+formatP$(slot.payoutCents);
+  }else{
+    button.classList.remove('cashout');
+    button.disabled=running&&takeoffPrep || roundStarting;
+    button.innerHTML='Aposta '+slot.id+'<br>'+formatP$(slot.betCents);
+  }
+}
+function render(){renderBalance();renderRecent();slots.forEach(renderSlot);$('mult').innerHTML=mult.toFixed(2)+'<span class="x">x</span>';}
+
+function sanitizeSlot(slot){
+  const raw=String($('betInput'+slot.id).value).replace(',','.');
+  const value=Number.parseFloat(raw);
+  const cents=Number.isFinite(value)?Math.round(value*100):100;
+  slot.betCents=clamp(cents,1,Math.max(1,pointsCents));
+  $('betInput'+slot.id).value=(slot.betCents/100).toFixed(2).replace('.',',');
+}
+function changeBet(id,delta){
+  if(running)return;
+  const slot=slots[id-1];
+  sanitizeSlot(slot);
+  slot.betCents=clamp(slot.betCents+delta*100,1,Math.max(1,pointsCents));
+  $('betInput'+id).value=(slot.betCents/100).toFixed(2).replace('.',',');
+  renderSlot(slot);
+}
+function addQuick(id,add){
+  if(running)return;
+  const slot=slots[id-1];
+  sanitizeSlot(slot);
+  slot.betCents=clamp(slot.betCents+add*100,1,Math.max(1,pointsCents));
+  $('betInput'+id).value=(slot.betCents/100).toFixed(2).replace('.',',');
+  renderSlot(slot);
+}
+
+function chooseEndpoint(){
+  const u=Math.random();
+  if(u<.03)return +(0.05+(u/.03)*.94).toFixed(2);
+  return +Math.min(100,.97/(1-u)).toFixed(2);
+}
+
+
+function startAudio(){
+  try{
+    if(!audioCtx){const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;audioCtx=new Ctx();}
+    if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+    if(!masterGain){
+      masterGain=audioCtx.createGain();
+      masterGain.gain.value=1.18;
+      audioCompressor=audioCtx.createDynamicsCompressor();
+      audioCompressor.threshold.value=-18;
+      audioCompressor.knee.value=10;
+      audioCompressor.ratio.value=5;
+      audioCompressor.attack.value=.003;
+      audioCompressor.release.value=.14;
+      masterGain.connect(audioCompressor).connect(audioCtx.destination);
+    }
+  }catch(e){}
+}
+function tone(freq,dur,type='sine',vol=.04,when=0,endFreq=null){
+  try{
+    if(!audioCtx||!masterGain)return;
+    const t=audioCtx.currentTime+when,o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type=type;o.frequency.setValueAtTime(Math.max(20,freq),t);
+    if(endFreq!=null)o.frequency.exponentialRampToValueAtTime(Math.max(20,endFreq),t+dur);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0001,vol),t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g).connect(masterGain);o.start(t);o.stop(t+dur+.02);
+  }catch(e){}
+}
+function noise(dur=.08,vol=.02,when=0,freq=1200){
+  try{
+    if(!audioCtx||!masterGain)return;
+    const t=audioCtx.currentTime+when,buffer=audioCtx.createBuffer(1,Math.max(1,Math.floor(audioCtx.sampleRate*dur)),audioCtx.sampleRate),data=buffer.getChannelData(0);
+    for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(1-i/data.length);
+    const src=audioCtx.createBufferSource(),filter=audioCtx.createBiquadFilter(),g=audioCtx.createGain();
+    src.buffer=buffer;filter.type='bandpass';filter.frequency.value=freq;filter.Q.value=1.4;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    src.connect(filter).connect(g).connect(masterGain);src.start(t);src.stop(t+dur+.02);
+  }catch(e){}
+}
+function stopMusic(){
+  if(musicTimer){clearInterval(musicTimer);musicTimer=0;}
+  if(musicGain&&audioCtx){
+    try{
+      const t=audioCtx.currentTime;
+      musicGain.gain.cancelScheduledValues(t);
+      musicGain.gain.setTargetAtTime(.0001,t,.018);
+    }catch(e){}
+  }
+  musicNodes.forEach(o=>{try{o.stop()}catch(e){}});
+  musicNodes.clear();
+  if(musicGain){try{musicGain.disconnect()}catch(e){}}
+  musicGain=null;
+}
+function startMusic(){
+  try{
+    if(!audioCtx||!masterGain||!running||takeoffPrep)return;
+    stopMusic();
+    const now=audioCtx.currentTime;
+    musicGain=audioCtx.createGain();
+    musicGain.gain.setValueAtTime(.0001,now);
+    musicGain.gain.exponentialRampToValueAtTime(.50,now+.35);
+    musicGain.connect(masterGain);
+
+    // Trilha original: ambiente eletrônico minimalista, pulso suave e tensão crescente.
+    // Não reproduz a gravação do Aviator; usa apenas características sonoras gerais do gênero.
+    const padBus=audioCtx.createGain();
+    padBus.gain.value=.58;
+    padBus.connect(musicGain);
+    const padFilter=audioCtx.createBiquadFilter();
+    padFilter.type='lowpass';padFilter.frequency.value=1250;padFilter.Q.value=.45;
+    padFilter.connect(padBus);
+
+    const pad=[110,130.81,146.83,164.81];
+    pad.forEach((f,i)=>{
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type=i%2?'sine':'triangle';o.frequency.value=f;
+      g.gain.value=.085;
+      o.connect(g).connect(padFilter);o.start();musicNodes.add(o);
+    });
+
+    let step=0;
+    const seq=[220,246.94,293.66,246.94,220,329.63,293.66,246.94];
+    const tick=()=>{
+      if(!running||takeoffPrep){stopMusic();return;}
+      const t=audioCtx.currentTime;
+      const n=seq[step++%seq.length];
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();
+      o.type='triangle';o.frequency.setValueAtTime(n,t);
+      f.type='lowpass';f.frequency.value=1800;f.Q.value=.5;
+      g.gain.setValueAtTime(.0001,t);
+      g.gain.exponentialRampToValueAtTime(.11,t+.035);
+      g.gain.exponentialRampToValueAtTime(.0001,t+.48);
+      o.connect(f).connect(g).connect(musicGain);musicNodes.add(o);
+      o.onended=()=>musicNodes.delete(o);o.start(t);o.stop(t+.52);
+    };
+    tick();
+    musicTimer=setInterval(tick,420);
+  }catch(e){console.warn('music',e)}
+}
+function startFlightSound(){
+  startAudio();
+  if(!audioCtx||!masterGain)return;
+  try{
+    stopFlightSound();
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type='sawtooth';o.frequency.value=72;f.type='lowpass';f.frequency.value=520;g.gain.value=.016;o.connect(f).connect(g).connect(masterGain);o.start();flightSound={o,g,f};startMusic();
+  }catch(e){}
+}
+function updateFlightSound(){
+  if(!flightSound||!audioCtx)return;
+  try{flightSound.o.frequency.setTargetAtTime(Math.min(900,72+mult*45),audioCtx.currentTime,.08);flightSound.f.frequency.setTargetAtTime(Math.min(1800,520+mult*90),audioCtx.currentTime,.1);flightSound.g.gain.setTargetAtTime(Math.min(.045,.016+mult*.0022),audioCtx.currentTime,.1);}catch(e){}
+}
+function stopFlightSound(){
+  stopMusic();
+  if(!flightSound||!audioCtx){flightSound=null;return;}
+  try{flightSound.g.gain.cancelScheduledValues(audioCtx.currentTime);flightSound.g.gain.setTargetAtTime(.0001,audioCtx.currentTime,.012);flightSound.o.stop(audioCtx.currentTime+.045);}catch(e){}flightSound=null;
+}
+function cashSound(){startAudio();tone(987.77,.09,'triangle',.075);tone(1318.51,.09,'triangle',.082,.055);tone(1567.98,.1,'triangle',.09,.11);tone(1975.53,.12,'triangle',.095,.165);tone(2637.02,.22,'sine',.10,.22);noise(.03,.016,.05,3800);noise(.03,.016,.16,4200);}
+function deathSound(){startAudio();tone(520,.64,'sawtooth',.09,0,115);tone(180,.18,'triangle',.04,.2,95);noise(.1,.022,.23,500);}
+function takeoffSound(){startAudio();for(let i=0;i<5;i++)tone(110+i*17,.055,'sine',.032,i*.17);noise(.18,.035,.72,900);}
+
+function setStatus(text,kind=''){const el=$('status');el.textContent=text;el.className='status '+kind;}
+function resetSlots(){slots.forEach(s=>{s.placed=false;s.cashed=false;s.payoutCents=0;});}
+function activeSlots(){return slots.filter(s=>s.placed&&!s.cashed);}
+function anyPlaced(){return slots.some(s=>s.placed);}
+async function placeBet(slot){
+  if(deathAnimating||slot.placed||roundStarting)return;
+  if(running&&!takeoffPrep)return;
+  sanitizeSlot(slot);
+  if(slot.betCents>pointsCents){setStatus('Saldo insuficiente para essa aposta.','bad');return;}
+  if(!running){
+    roundStarting=true;
+    setStatus('⏳ Preparando decolagem...');
+  }
+  pointsCents=Math.max(0,pointsCents-slot.betCents);slot.placed=true;slot.cashed=false;render();
+  if(!running)startRound();
+}
+function countdownTone(n){
+  startAudio();
+  if(n===3){tone(392,.18,'sine',.07);noise(.035,.014,.02,1700);}
+  else if(n===2){tone(523.25,.18,'sine',.078);noise(.04,.017,.02,1900);}
+  else {tone(659.25,.22,'triangle',.09);tone(987.77,.12,'sine',.055,.09);noise(.045,.02,.02,2200);}
+}
+function launchTone(){startAudio();tone(261.63,.12,'sawtooth',.06,0,392);tone(392,.16,'triangle',.085,.08,783.99);noise(.22,.04,.04,1000);}
+function showCountdown(){
+  return new Promise(resolve=>{
+    const box=$('countdown'),num=$('countdownNum');let n=3;
+    box.classList.add('show');box.classList.remove('go');
+    const tick=()=>{
+      num.textContent=String(n);num.style.animation='none';void num.offsetWidth;num.style.animation='countPop .82s cubic-bezier(.2,.8,.2,1) both';countdownTone(n);
+      if(n>1){n--;setTimeout(tick,1000);return;}
+      setTimeout(()=>{box.classList.add('go');num.textContent='DECOLAR!';num.style.animation='none';void num.offsetWidth;num.style.animation='countPop .58s cubic-bezier(.2,.8,.2,1) both';launchTone();setTimeout(()=>{box.classList.remove('show','go');resolve();},520);},760);
+    };tick();
+  });
+}
+async function startRound(){
+  if(running||!roundStarting)return;if(!anyPlaced()){roundStarting=false;return;}
+  running=true;roundStarting=false;takeoffPrep=true;deathAnimating=false;mult=1;round++;
+  $('board').classList.remove('running','hot');$('pigeon').className='pigeon';$('pigeon').style.opacity='1';$('pigeon').style.left='2%';$('pigeon').style.top='96%';$('pigeon').style.transform='translate(-50%,-50%) rotate(-5deg)';
+  const curvePath=$('curvePath'),curveCore=$('curveCore'),curveTip=$('curveTip'),areaPath=$('areaPath');
+  [curvePath,curveCore].forEach(path=>{try{const len=path.getTotalLength();path.style.strokeDasharray=len;path.style.strokeDashoffset=len;}catch(e){}});
+  curveTip.setAttribute('cx','12');curveTip.setAttribute('cy','412.8');curvePath.setAttribute('d','M12 412.8');curveCore.setAttribute('d','M12 412.8');areaPath.setAttribute('d','M12 412.8 L12 430 Z');
+  setStatus('Preparando voo...');render();
+  crash=chooseEndpoint();
+  if(!running)return;
+  await showCountdown();if(!running)return;
+  setStatus('🐦 Pegando impulso...');render();takeoffSound();
+  const started=performance.now();
+  $('pigeon').className='pigeon takeoff';
+  function prep(t){
+    if(!running||!takeoffPrep)return;
+    const p=Math.min(1,(t-started)/900),step=Math.min(5,Math.floor(p*5)+1),phase=(p*5)%1;
+    const x=2+5*p,y=96-5*p-Math.sin(phase*Math.PI)*2;$('pigeon').style.left=clamp(x,8,88)+'%';$('pigeon').style.top=clamp(y,12,88)+'%';$('pigeon').style.transform=`translate(-50%,-50%) rotate(${-5+step*1.2}deg)`;
+    if(p>=1){takeoffPrep=false;startTime=performance.now();$('board').classList.add('running');$('pigeon').className='pigeon flying';setStatus('O pombo está voando...');startFlightSound();raf=requestAnimationFrame(flightLoop);return;}
+    raf=requestAnimationFrame(prep);
+  }
+  raf=requestAnimationFrame(prep);
+}
+function cashout(slot){
+  if(!running||!slot.placed||slot.cashed||deathAnimating)return;
+  slot.cashed=true;slot.payoutCents=Math.max(0,Math.round(slot.betCents*mult));pointsCents=Math.max(0,pointsCents+slot.payoutCents);cashSound();setStatus('💰 Resgate confirmado em '+mult.toFixed(2)+'x','good');render();
+  // O resgate não encerra o áudio do voo: a música e o som de voo continuam
+  // enquanto o pombo estiver no ar. O áudio só é encerrado em finishRound(),
+  // quando o pombo efetivamente morre/foge da rodada.
+  if(activeSlots().length===0){setStatus('💰 Todas as apostas foram resgatadas. O pombo continua voando...','good');}
+}
+function finishRound(){
+  if(!running)return;
+  running=false;takeoffPrep=false;deathAnimating=true;stopFlightSound();deathSound();
+  $('pigeon').className='pigeon flee';
+  const p0={x:parseFloat($('pigeon').style.left)||50,y:parseFloat($('pigeon').style.top)||50},t0=performance.now(),duration=460;
+  const startRot=-24;
+  function flyAway(t){
+    const p=Math.min(1,(t-t0)/duration),e=1-Math.pow(1-p,4);
+    const x=p0.x+(112-p0.x)*e;
+    const y=p0.y-(p0.y+30)*e;
+    const r=startRot-20*e;
+    const scale=1+.18*e;
+    $('pigeon').style.left=clamp(x,8,88)+'%';$('pigeon').style.top=clamp(y,12,88)+'%';$('pigeon').style.transform=`translate(-50%,-50%) rotate(${r}deg) scale(${scale})`;
+    if(p<1){raf=requestAnimationFrame(flyAway);return;}
+    $('pigeon').style.left='116%';$('pigeon').style.top='-28%';$('pigeon').style.opacity='0';deathAnimating=false;
+    recent.unshift(mult);recent=recent.slice(0,12);render();
+    setStatus(activeSlots().length?'🐦 O voo terminou em '+mult.toFixed(2)+'x — aposta perdida.':'Voo encerrado em '+mult.toFixed(2)+'x.','bad');
+    resetSlots();render();
+  }
+  raf=requestAnimationFrame(flyAway);
+}
+function flightLoop(t){
+  if(!running||takeoffPrep)return;
+  const elapsed=(t-startTime)/1000;
+  // Multiplicador em 50% da velocidade anterior. A distribuição/RTP do crash permanece inalterada.
+  const slowElapsed=elapsed*0.5;
+  mult=1+.62*slowElapsed+.095*slowElapsed*slowElapsed;
+
+  // Trajetória no estilo crash-game: suave no início, acelera com o multiplicador.
+  // O pombo permanece dentro da área visível até o ponto de fuga.
+  const pathProgress=clamp(Math.log(Math.max(1,mult))/Math.log(10),0,1);
+  const eased=pathProgress*pathProgress*(3-2*pathProgress);
+  const p0={x:2,y:96},p1={x:23,y:94},p2={x:57,y:65},p3={x:88,y:23};
+  const u=1-eased,q=eased;
+  const x=u*u*u*p0.x+3*u*u*q*p1.x+3*u*q*q*p2.x+q*q*q*p3.x;
+  const baseY=u*u*u*p0.y+3*u*u*q*p1.y+3*u*q*q*p2.y+q*q*q*p3.y;
+  const y=clamp(baseY + Math.sin(elapsed*7.2)*.52, 12, 88);
+  const dx=3*u*u*(p1.x-p0.x)+6*u*q*(p2.x-p1.x)+3*q*q*(p3.x-p2.x);
+  const dy=3*u*u*(p1.y-p0.y)+6*u*q*(p2.y-p1.y)+3*q*q*(p3.y-p2.y);
+  const angle=Math.atan2(-dy,dx)*180/Math.PI + Math.sin(elapsed*5.1)*1.15;
+  // A curva é desenhada progressivamente atrás do pombo, em vez de permanecer estática.
+  const curveProgress=Math.max(.002,Math.min(1,eased));
+
+  // Trail realmente dinâmico: reconstrói apenas o trecho já percorrido pelo pombo.
+  // O caminho é amostrado da mesma curva usada pelo movimento, evitando uma linha
+  // estática pré-desenhada. A micro-oscilação acompanha o pombo e dá organicidade.
+  const trailPoints=[];
+  const samples=Math.max(12,Math.ceil(curveProgress*64));
+  for(let i=0;i<=samples;i++){
+    const tt=curveProgress*(i/samples),vv=1-tt;
+    const bx=vv*vv*vv*p0.x+3*vv*vv*tt*p1.x+3*vv*tt*tt*p2.x+tt*tt*tt*p3.x;
+    const by=vv*vv*vv*p0.y+3*vv*vv*tt*p1.y+3*vv*tt*tt*p2.y+tt*tt*tt*p3.y;
+    const wobble=i===samples ? Math.sin(elapsed*7.2)*.75 : Math.sin((elapsed-(curveProgress-tt)*2.2)*7.2)*.24;
+    trailPoints.push({x:bx*6,y:(by+wobble)*4.3});
+  }
+  // Converte os pontos em uma curva SVG suave (Catmull-Rom -> cúbicas),
+  // eliminando o aspecto serrilhado/segmentado do trail em telas móveis.
+  function smoothTrailPath(points){
+    if(points.length<2)return '';
+    if(points.length===2)return `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)} L ${points[1].x.toFixed(2)} ${points[1].y.toFixed(2)}`;
+    let d=`M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+    for(let i=0;i<points.length-1;i++){
+      const p0=points[i-1]||points[i];
+      const p1=points[i];
+      const p2=points[i+1];
+      const p3=points[i+2]||p2;
+      const c1={x:p1.x+(p2.x-p0.x)/6,y:p1.y+(p2.y-p0.y)/6};
+      const c2={x:p2.x-(p3.x-p1.x)/6,y:p2.y-(p3.y-p1.y)/6};
+      d+=` C ${c1.x.toFixed(2)} ${c1.y.toFixed(2)}, ${c2.x.toFixed(2)} ${c2.y.toFixed(2)}, ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+    }
+    return d;
+  }
+  const dTrail=smoothTrailPath(trailPoints);
+  curvePath.setAttribute('d',dTrail);
+  curveCore.setAttribute('d',dTrail);
+  const last=trailPoints[trailPoints.length-1],first=trailPoints[0];
+  // O preenchimento acompanha a curva até a borda direita do gráfico,
+  // evitando a "parede" vertical que aparecia no ponto final do trail.
+  areaPath.setAttribute('d',dTrail+' L 600 430 L '+first.x.toFixed(2)+' 430 Z');
+  curveTip.setAttribute('cx',last.x.toFixed(2));curveTip.setAttribute('cy',last.y.toFixed(2));
+  $('pigeon').style.left=clamp(x,8,88)+'%';$('pigeon').style.top=clamp(y,12,88)+'%';$('pigeon').style.transform=`translate(-50%,-50%) rotate(${angle}deg)`;
+  $('mult').innerHTML=mult.toFixed(2)+'<span class="x">x</span>';$('board').classList.toggle('hot',mult>=5);
+  // O valor do RESGATAR acompanha o multiplicador em cada frame, em tempo real.
+  slots.forEach(s=>{
+    if(s.placed&&!s.cashed){
+      const b=$('betButton'+s.id);
+      b.innerHTML='RESGATAR<br>'+formatP$(Math.round(s.betCents*mult));
+    }
+  });
+  // A velocidade aparente do vento aumenta junto com o voo, criando sensação contínua de deslocamento.
+  const wind=Math.min(1,Math.max(0,(mult-1)/14));
+  $('board').style.setProperty('--wind-near',(2.8-wind*1.7).toFixed(2)+'s');
+  $('board').style.setProperty('--wind-mid',(7.2-wind*3.2).toFixed(2)+'s');
+  $('board').style.setProperty('--wind-far',(14.5-wind*4.5).toFixed(2)+'s');
+  updateFlightSound();
+  slots.forEach(s=>{if(s.placed&&!s.cashed&&s.auto&&mult>=s.target)cashout(s);});
+  if(mult>=crash){mult=crash;$('mult').innerHTML=mult.toFixed(2)+'<span class="x">x</span>';finishRound();return;}
+  raf=requestAnimationFrame(flightLoop);
+}
+
+slots.forEach(slot=>{
+  $('betInput'+slot.id).addEventListener('change',()=>{if(running)return;sanitizeSlot(slot);renderSlot(slot);});
+  $('minus'+slot.id).onclick=()=>changeBet(slot.id,-1);
+  $('plus'+slot.id).onclick=()=>changeBet(slot.id,1);
+  $('betButton'+slot.id).onclick=()=>{if(slot.placed&&!slot.cashed)cashout(slot);else placeBet(slot);};
+  $('autoSwitch'+slot.id).onclick=()=>{slot.auto=!slot.auto;renderSlot(slot);};
+  $('autoTarget'+slot.id).addEventListener('change',()=>{const v=Number.parseFloat($('autoTarget'+slot.id).value);slot.target=Number.isFinite(v)?clamp(v,1.01,100):1.50;renderSlot(slot);});
+});
+document.querySelectorAll('.quick button').forEach(btn=>btn.addEventListener('click',()=>addQuick(Number(btn.dataset.slot),Number(btn.dataset.add))));
+$('aboutBtn').onclick=()=>{$('aboutModal').classList.add('open');$('aboutModal').setAttribute('aria-hidden','false');};
+$('aboutClose').onclick=()=>{$('aboutModal').classList.remove('open');$('aboutModal').setAttribute('aria-hidden','true');};
+$('aboutModal').onclick=e=>{if(e.target===$('aboutModal'))$('aboutClose').click();};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('aboutModal').classList.contains('open'))$('aboutClose').click();});
+
+
+render();
+</script>
+</body>
+</html>
